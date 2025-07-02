@@ -21,8 +21,8 @@ namespace ApiNotasSimples.Data.Repositories
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT Id, Titulo, Conteudo, DataCriacao FROM Notas WHERE UsuarioId = @UsuarioId";
-                cmd.Parameters.AddWithValue("@Id", Id);
+                cmd.CommandText = "SELECT Id, Titulo, Conteudo, DataCriacao, UsuarioId FROM Notas WHERE UsuarioId = @usuarioId";
+                cmd.Parameters.AddWithValue("@usuarioId", Id);
 
                 using (var reader = cmd.ExecuteReader())
                 {

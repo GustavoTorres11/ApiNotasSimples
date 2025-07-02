@@ -12,7 +12,7 @@ namespace ApiNotasSimples.Services
             _repo = repo;
         }
 
-        public async Task<NotaModel> Adicionar(NotaDTO notaDto)
+        public async Task<NotaModel> Adicionar(NotaDTO notaDto, int usuarioId)
         {
             if (notaDto == null)
                 throw new ArgumentNullException(nameof(notaDto), "Nota não pode ser nula");
@@ -21,6 +21,7 @@ namespace ApiNotasSimples.Services
             {
                 Titulo = notaDto.Titulo,
                 Conteudo = notaDto.Conteudo,
+                UsuarioId = usuarioId
             };
             var id = await _repo.Adicionar(nota);
             nota.Id = id;

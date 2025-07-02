@@ -34,7 +34,9 @@ namespace ApiNotasSimples.Controllers
         {
             try
             {
-                var nota1 = await _services.Adicionar(nota);
+                var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var nota1 = await _services.Adicionar(nota, usuarioId);
+
 
                 return Ok(nota1);
             }
