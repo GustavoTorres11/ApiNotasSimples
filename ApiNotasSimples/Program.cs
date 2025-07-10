@@ -1,26 +1,27 @@
-﻿using ApiNotasSimples.Data.Context;
-using ApiNotasSimples.Data.Repositories;
+﻿using ApiCadastroClientes.Data.Repositories;
+using ApiCadastroClientes.Services;
+using ApiNotasSimples.Data.Context;
 using ApiNotasSimples.Services;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serviços da aplicação
+// Adiciona serviços ao container
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddScoped<SqlServerContext>();
-builder.Services.AddScoped<NotaRepository>();
-builder.Services.AddScoped<NotaServices>();
+builder.Services.AddSingleton<SqlServerContext>();
+builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddScoped<CryptoService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddLogging(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug)); // Logging detalhado
 
-// Swagger simples (sem JWT)
-builder.Services.AddSwaggerGen(opt =>
-{
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "API Notas", Version = "v1" });
-});
+// Swagger
+builder.Services.AddSwaggerGen(c =>
+    c.SwaggerDoc("v1", new() { Title = "API-CadastroCliente", Version = "v1" })
+);
 
 var app = builder.Build();
 
-// Pipeline
+// Pipeline de requisição
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -29,6 +30,5 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
 app.Run();
-
-

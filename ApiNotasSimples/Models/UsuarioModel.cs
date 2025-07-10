@@ -1,10 +1,16 @@
-﻿namespace ApiNotasSimples.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ApiNotasSimples.Models
 {
     public class UsuarioModel
     {
-
+        public int Id { get; set; }
+        [MinLength(4)] public string Nome { get; set; }
         public string Email { get; set; }
-        public string Senha { get; set; }
+        [MinLength(4)] public string Senha { get; set; }
+        public string Telefone { get; set; }
+        public string Cpf { get; set; }
+        [MinLength(4)] public string Endereco { get; set; }
 
     }
 }

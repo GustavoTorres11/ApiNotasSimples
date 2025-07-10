@@ -11,7 +11,6 @@ public class SqlServerContext
     {
         _connectionString = configuration.GetConnectionString("SqlServerConnection");
     }
-
     public SqlConnection GetConnection()
     {
         return new SqlConnection(_connectionString);
