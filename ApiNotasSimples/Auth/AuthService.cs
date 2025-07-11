@@ -23,7 +23,7 @@ namespace ApiCadastroClientes.Services
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto), "Dados do usuário não podem ser nulos.");
 
-            var usuarioExistente = await _repo.BuscarPorEmail(dto.Email); // Ajuste para assíncrono
+            var usuarioExistente = await _repo.BuscarPorEmail(dto.Email); 
             if (usuarioExistente != null)
             {
                 throw new Exception("E-mail já cadastrado!");
@@ -49,7 +49,7 @@ namespace ApiCadastroClientes.Services
             if (login == null)
                 throw new ArgumentNullException(nameof(login), "Dados de login não podem ser nulos.");
 
-            var usuario = await _repo.BuscarPorEmail(login.Email); // Usar await para método assíncrono
+            var usuario = await _repo.BuscarPorEmail(login.Email); 
             if (usuario != null)
             {
                 _logger.LogDebug("Usuário encontrado: {Email}, Senha: {Senha}", usuario.Email, usuario.Senha ?? "null");
