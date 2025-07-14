@@ -1,5 +1,6 @@
 ﻿using ApiCadastroClientes.Models.DTO;
 using ApiCadastroClientes.Services;
+using ApiNotasSimples.Helpers;
 using ApiNotasSimples.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,15 @@ namespace ApiCadastroClientes.Controllers
             _authService = authService;
         }
 
+        //CADASTRAR e verificar se cpf é valido entre outros dados
         [HttpPost("Cadastro")]
         public async Task<IActionResult> Cadastro([FromBody] UsuarioDTO cadastro)
         {
+            if (!CpfValidator.Validar(cadastro.Cpf))
+            {
+                return BadRequest(new { mensagem = "CPF inválido." });
+            }
+
             if (cadastro == null || !ModelState.IsValid)
                 return BadRequest("Dados inválidos.");
 
@@ -38,9 +45,10 @@ namespace ApiCadastroClientes.Controllers
             }
         }
 
+        //LOGIN
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
-        {
+            {
             var usuarioTask = _authService.Logar(login);
             var usuario = await usuarioTask; 
 

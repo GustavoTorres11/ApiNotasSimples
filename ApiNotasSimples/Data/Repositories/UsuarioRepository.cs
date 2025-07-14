@@ -16,6 +16,7 @@ namespace ApiCadastroClientes.Data.Repositories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        //adicionar
         public async Task<int> Adicionar(UsuarioModel usuario)
         {
             await using var conn = _context.GetConnection();
@@ -36,6 +37,7 @@ namespace ApiCadastroClientes.Data.Repositories
             return id;
         }
 
+        //buscar por ID
         public async Task<UsuarioModel?> BuscarPorEmail(string email)
         {
             if (string.IsNullOrEmpty(email)) throw new ArgumentException("E-mail inválido", nameof(email));
@@ -69,6 +71,7 @@ namespace ApiCadastroClientes.Data.Repositories
             }
         }
 
+        //buscar por ID
         public async Task<UsuarioModel?> BuscarPorId(int id)
         {
             await using var conn = _context.GetConnection();
@@ -94,6 +97,7 @@ namespace ApiCadastroClientes.Data.Repositories
             return null;
         }
 
+        //listar todos
         public async Task<List<UsuarioModel>> ListarTodos()
         {
             await using var conn = _context.GetConnection();
@@ -119,6 +123,7 @@ namespace ApiCadastroClientes.Data.Repositories
             return lista;
         }
 
+        //Atualizar
         public async Task<bool> Atualizar(int id, UsuarioModel usuario)
         {
             await using var conn = _context.GetConnection();
@@ -139,6 +144,7 @@ namespace ApiCadastroClientes.Data.Repositories
             return rows > 0;
         }
 
+        //remover
         public async Task<bool> Remover(int id)
         {
             await using var conn = _context.GetConnection();

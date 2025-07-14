@@ -18,24 +18,6 @@ public class UsuarioController : ControllerBase
         _authService = authService;
     }
 
-    // POST: Cadastra novo usuário
-    [HttpPost("Cadastrar")]
-    public async Task<IActionResult> Cadastrar([FromBody] UsuarioDTO usuario)
-    {
-        var usuarioCadastrado = await _authService.Cadastrar(usuario);
-        return Ok(usuarioCadastrado);
-    }
-
-    // POST: Realiza login
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDTO login)
-    {
-        var usuario = await _authService.Logar(login);
-        if (usuario == null)
-            return Unauthorized("Email ou senha incorretos.");
-        return Ok("Login realizado com sucesso " + usuario);
-    }
-
     // GET: Lista todos os usuários
     [HttpGet]
     public IActionResult ListarTodos() => Ok(_repo.ListarTodos());

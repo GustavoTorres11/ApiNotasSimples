@@ -18,6 +18,7 @@ namespace ApiCadastroClientes.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        //CADASTRAR
         public async Task<UsuarioModel> Cadastrar(UsuarioDTO dto)
         {
             if (dto == null)
@@ -44,6 +45,8 @@ namespace ApiCadastroClientes.Services
             return usuario;
         }
 
+
+        //LOGAR
         public async Task<UsuarioModel?> Logar(LoginDTO login)
         {
             if (login == null)
