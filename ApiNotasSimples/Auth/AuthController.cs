@@ -2,6 +2,7 @@
 using ApiCadastroClientes.Services;
 using ApiNotasSimples.Helpers;
 using ApiNotasSimples.Models;
+using ApiNotasSimples.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCadastroClientes.Controllers
@@ -32,11 +33,15 @@ namespace ApiCadastroClientes.Controllers
             try
             {
                 var usuario = await _authService.Cadastrar(cadastro);
+                var token = TokenService.GerarToken(usuario);
+
                 return Ok(new
-                {
+                {   
+                    token,
                     usuario.Id,
                     usuario.Nome,
-                    usuario.Email
+                    usuario.Email,  
+                    usuario.Role
                 });
             }
             catch (Exception ex)
@@ -54,12 +59,16 @@ namespace ApiCadastroClientes.Controllers
 
             if (usuario == null)
                 return Unauthorized("Email ou senha incorretos.");
-                    
+
+            var token = TokenService.GerarToken(usuario);
+
             return Ok(new
             {
+                token,
                 usuario.Id,
                 usuario.Nome,
-                usuario.Email
+                usuario.Email,
+                usuario.Role
             });
         }
     }

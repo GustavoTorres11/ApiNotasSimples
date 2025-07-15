@@ -12,5 +12,7 @@ namespace ApiNotasSimples.Models
         public string Cpf { get; set; }
         public string Endereco { get; set; }
 
+        // Campo que define o tipo de usuário
+        public string Role { get; set; } = "user"; // padrão é 'user'
     }
 }

@@ -16,6 +16,7 @@ namespace ApiCadastroClientes.Models.DTO
         public string Cpf { get; set; }
         public string Endereco { get; set; }
 
+        public string? Role { get; set; } // pode ser null, você define "user" como padrão se não for informado
 
-    }
+    }   
 }

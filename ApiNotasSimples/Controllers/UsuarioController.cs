@@ -2,6 +2,7 @@
 using ApiCadastroClientes.Models.DTO;
 using ApiCadastroClientes.Services;
 using ApiNotasSimples.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -20,7 +21,11 @@ public class UsuarioController : ControllerBase
 
     // GET: Lista todos os usuários
     [HttpGet]
-    public IActionResult ListarTodos() => Ok(_repo.ListarTodos());
+    [Authorize]
+    public async Task<ActionResult> ListarTodos()
+    {
+        return Ok(await _repo.ListarTodos());
+    }
 
     // GET: Busca usuário por ID
     [HttpGet("{id}")]

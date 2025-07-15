@@ -18,49 +18,50 @@ namespace ApiCadastroClientes.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        //CADASTRAR
+        // CADASTRAR
         public async Task<UsuarioModel> Cadastrar(UsuarioDTO dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto), "Dados do usuário não podem ser nulos.");
 
-            var usuarioExistente = await _repo.BuscarPorEmail(dto.Email); 
+            var usuarioExistente = await _repo.BuscarPorEmail(dto.Email);
             if (usuarioExistente != null)
-            {
                 throw new Exception("E-mail já cadastrado!");
-            }
 
             var usuario = new UsuarioModel()
             {
                 Nome = dto.Nome,
                 Email = dto.Email,
-                Senha = _cryptoService.HashPassword(dto.Senha),
+                Senha = _cryptoService.HashPassword(dto.Senha), 
                 Endereco = dto.Endereco,
                 Cpf = dto.Cpf,
-                Telefone = dto.Telefone
+                Telefone = dto.Telefone,
+                Role = string.IsNullOrEmpty(dto.Role) ? "user" : dto.Role
             };
 
             usuario.Id = await _repo.Adicionar(usuario);
             _logger.LogInformation("Usuário cadastrado com ID: {Id}", usuario.Id);
+
             return usuario;
         }
 
-
-        //LOGAR
+        // LOGAR
         public async Task<UsuarioModel?> Logar(LoginDTO login)
         {
             if (login == null)
                 throw new ArgumentNullException(nameof(login), "Dados de login não podem ser nulos.");
 
-            var usuario = await _repo.BuscarPorEmail(login.Email); 
+            var usuario = await _repo.BuscarPorEmail(login.Email);
             if (usuario != null)
             {
                 _logger.LogDebug("Usuário encontrado: {Email}, Senha: {Senha}", usuario.Email, usuario.Senha ?? "null");
+
                 if (!string.IsNullOrEmpty(usuario.Senha) && _cryptoService.VerifyPassword(login.Senha, usuario.Senha))
                 {
                     _logger.LogInformation("Login bem-sucedido para e-mail: {Email}", login.Email);
                     return usuario;
                 }
+
                 _logger.LogWarning("Senha inválida para e-mail: {Email}", login.Email);
             }
             else

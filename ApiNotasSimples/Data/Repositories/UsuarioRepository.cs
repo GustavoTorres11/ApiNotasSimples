@@ -37,7 +37,7 @@ namespace ApiCadastroClientes.Data.Repositories
             return id;
         }
 
-        //buscar por ID
+        //buscar por email
         public async Task<UsuarioModel?> BuscarPorEmail(string email)
         {
             if (string.IsNullOrEmpty(email)) throw new ArgumentException("E-mail inválido", nameof(email));
@@ -103,7 +103,7 @@ namespace ApiCadastroClientes.Data.Repositories
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
 
-            var cmd = new SqlCommand("SELECT Id, Nome, Email, Endereco, Cpf, Telefone FROM Usuarios", conn);
+            var cmd = new SqlCommand("SELECT * FROM Usuarios", conn);
             await using var reader = await cmd.ExecuteReaderAsync();
 
             var lista = new List<UsuarioModel>();
