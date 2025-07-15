@@ -33,11 +33,9 @@ namespace ApiCadastroClientes.Controllers
             try
             {
                 var usuario = await _authService.Cadastrar(cadastro);
-                var token = TokenService.GerarToken(usuario);
 
                 return Ok(new
                 {   
-                    token,
                     usuario.Id,
                     usuario.Nome,
                     usuario.Email,  
@@ -54,12 +52,12 @@ namespace ApiCadastroClientes.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
             {
-            var usuarioTask = _authService.Logar(login);
-            var usuario = await usuarioTask; 
+            var usuario = await _authService.Logar(login);
 
             if (usuario == null)
                 return Unauthorized("Email ou senha incorretos.");
 
+            Console.Write(usuario.Role);
             var token = TokenService.GerarToken(usuario);
 
             return Ok(new

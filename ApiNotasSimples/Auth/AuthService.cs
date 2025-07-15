@@ -35,8 +35,7 @@ namespace ApiCadastroClientes.Services
                 Senha = _cryptoService.HashPassword(dto.Senha), 
                 Endereco = dto.Endereco,
                 Cpf = dto.Cpf,
-                Telefone = dto.Telefone,
-                Role = string.IsNullOrEmpty(dto.Role) ? "user" : dto.Role
+                Telefone = dto.Telefone
             };
 
             usuario.Id = await _repo.Adicionar(usuario);

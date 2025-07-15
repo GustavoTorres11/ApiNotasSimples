@@ -45,7 +45,7 @@ namespace ApiCadastroClientes.Data.Repositories
             try
             {
                 await conn.OpenAsync();
-                var cmd = new SqlCommand("SELECT Id, Nome, Email, Senha FROM Usuarios WHERE Email = @Email", conn);
+                var cmd = new SqlCommand("SELECT Id, Nome, Email, Senha, Role FROM Usuarios WHERE Email = @Email", conn);
                 cmd.Parameters.AddWithValue("@Email", email);
 
                 await using var reader = await cmd.ExecuteReaderAsync();
@@ -56,7 +56,8 @@ namespace ApiCadastroClientes.Data.Repositories
                         Id = reader.GetInt32(0),
                         Nome = reader.GetString(1),
                         Email = reader.GetString(2),
-                        Senha = reader.IsDBNull(3) ? null : reader.GetString(3)
+                        Senha = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        Role = reader.GetString(4)
                     };
                     _logger.LogDebug("Usuário retornado: {Email}, Senha: {Senha}", email, usuario.Senha);
                     return usuario;

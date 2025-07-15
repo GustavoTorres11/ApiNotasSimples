@@ -21,7 +21,7 @@ public class UsuarioController : ControllerBase
 
     // GET: Lista todos os usuários
     [HttpGet]
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult> ListarTodos()
     {
         return Ok(await _repo.ListarTodos());
@@ -29,6 +29,7 @@ public class UsuarioController : ControllerBase
 
     // GET: Busca usuário por ID
     [HttpGet("{id}")]
+    [Authorize(Roles = "admin")]
     public IActionResult BuscarPorId(int id)
     {
         var usuario = _repo.BuscarPorId(id);
@@ -39,17 +40,19 @@ public class UsuarioController : ControllerBase
 
     // PUT: Atualiza usuário por ID
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] UsuarioModel usuario)
     {
         var atualizado = await _repo.Atualizar(id, usuario);
-        return atualizado ? Ok("Atualizado com sucesso") : NotFound();
+        return Ok(new { mensagem = "Atualizado com sucesso" });
     }
 
     // DELETE: Remove usuário por ID
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Remover(int id)
     {
         var removido = await _repo.Remover(id);
-        return removido ? Ok("Removido com sucesso") : NotFound();
+        return Ok(new { mensagem = "Removido com sucesso" });
     }
 }

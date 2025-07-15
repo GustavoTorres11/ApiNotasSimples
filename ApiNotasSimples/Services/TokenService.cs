@@ -15,7 +15,7 @@ namespace ApiNotasSimples.Services
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, usuario.Email),
-                new Claim(ClaimTypes.Role, usuario.Role ?? "user") // "admin" ou "user"
+                new Claim(ClaimTypes.Role, usuario.Role) // "admin" ou "user"
             };
 
             var tokenConfig = new SecurityTokenDescriptor
