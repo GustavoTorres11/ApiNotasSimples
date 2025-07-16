@@ -1,6 +1,7 @@
 ﻿using ApiCadastroClientes.Data.Repositories;
 using ApiCadastroClientes.Models.DTO;
 using ApiNotasSimples.Models;
+using ApiNotasSimples.Models.DTO;
 
 namespace ApiNotasSimples.Services
 {
@@ -30,7 +31,7 @@ namespace ApiNotasSimples.Services
         }
 
         // esse método busca um usuário pelo email e senha, retornando o usuário se encontrado
-        public Task<List<UsuarioModel>> Listar()
+        public Task<List<UsuarioResult>> Listar()
         {
             return _repo.ListarTodos();
         }

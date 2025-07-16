@@ -1,5 +1,6 @@
 ﻿using ApiNotasSimples.Data.Context;
 using ApiNotasSimples.Models;
+using ApiNotasSimples.Models.DTO;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 
@@ -99,7 +100,7 @@ namespace ApiCadastroClientes.Data.Repositories
         }
 
         //listar todos
-        public async Task<List<UsuarioModel>> ListarTodos()
+        public async Task<List<UsuarioResult>> ListarTodos()
         {
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
@@ -115,13 +116,24 @@ namespace ApiCadastroClientes.Data.Repositories
                     Id = reader.GetInt32(0),
                     Nome = reader.GetString(1),
                     Email = reader.GetString(2),
-                    Endereco = reader.IsDBNull(3) ? null : reader.GetString(3),
-                    Cpf = reader.IsDBNull(4) ? null : reader.GetString(4),
-                    Telefone = reader.IsDBNull(5) ? null : reader.GetString(5)
+                    Endereco = reader.IsDBNull(6) ? null : reader.GetString(6),
+                    Cpf = reader.IsDBNull(5) ? null : reader.GetString(5),
+                    Telefone = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    Role = reader.GetString(7) 
+
                 });
             }
 
-            return lista;
+            var result = new List<UsuarioResult>();
+            foreach (var usuario in lista)
+            {
+                var usuarioResult = new UsuarioResult(usuario);
+
+                result.Add(usuarioResult);
+
+            }
+
+            return result;
         }
 
         //Atualizar
