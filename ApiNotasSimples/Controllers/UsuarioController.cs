@@ -10,13 +10,30 @@ using Microsoft.AspNetCore.Mvc;
 public class UsuarioController : ControllerBase
 {
     private readonly UsuarioRepository _repo; 
-    private readonly AuthService _authService; 
+    private readonly AuthService _authService;
+    private readonly CryptoService _cryptoService;
 
     // Injeção de dependência
-    public UsuarioController(UsuarioRepository repo, AuthService authService)
+    public UsuarioController(UsuarioRepository repo, AuthService authService, CryptoService cryptoService)
     {
         _repo = repo;
         _authService = authService;
+        _cryptoService = cryptoService;
+    }
+
+    // POST: Cadastra novo usuário
+    [HttpPost]
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> Cadastrar([FromBody] UsuarioModel usuario)
+    {
+        usuario.Senha = _cryptoService.HashPassword(usuario.Senha);
+        var id = await _repo.Adicionar(usuario);
+        
+        if (id <= 0)
+            return BadRequest(new { mensagem = "Erro ao cadastrar usuário." });
+
+            return Ok(new { mensagem = "Usuario cadastrado com sucesso" });
+
     }
 
     // GET: Lista todos os usuários
@@ -30,9 +47,9 @@ public class UsuarioController : ControllerBase
     // GET: Busca usuário por ID
     [HttpGet("{id}")]
     [Authorize(Roles = "admin")]
-    public IActionResult BuscarPorId(int id)
+    public async Task<IActionResult> BuscarPorId(int id)
     {
-        var usuario = _repo.BuscarPorId(id);
+        var usuario = await _repo.BuscarPorId(id);
         if (usuario == null)
             return NotFound();
         return Ok(usuario);
@@ -43,6 +60,7 @@ public class UsuarioController : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] UsuarioModel usuario)
     {
+        usuario.Senha = _cryptoService.HashPassword(usuario.Senha);
         var atualizado = await _repo.Atualizar(id, usuario);
         return Ok(new { mensagem = "Atualizado com sucesso" });
     }
