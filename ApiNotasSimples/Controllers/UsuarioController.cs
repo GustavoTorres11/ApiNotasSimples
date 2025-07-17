@@ -40,7 +40,7 @@ public class UsuarioController : ControllerBase
     [HttpGet]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult> ListarTodos()
-    {
+    {   
         return Ok(await _repo.ListarTodos());
     }
 
