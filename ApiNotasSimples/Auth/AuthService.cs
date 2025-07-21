@@ -38,7 +38,8 @@ namespace ApiCadastroClientes.Services
                 Telefone = dto.Telefone
             };
 
-            usuario.Id = await _repo.Adicionar(usuario);
+            _repo.Adicionar(usuario);
+
             _logger.LogInformation("Usuário cadastrado com ID: {Id}", usuario.Id);
 
             return usuario;

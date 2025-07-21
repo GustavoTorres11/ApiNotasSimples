@@ -26,8 +26,8 @@ namespace ApiNotasSimples.Services
                 Endereco = dto.Endereco
             };
 
-            cliente.Id = await _repo.Adicionar(cliente);
-            return cliente;
+            var novoCliente = await _repo.Adicionar(cliente);
+            return novoCliente;
         }
 
         // esse método busca um usuário pelo email e senha, retornando o usuário se encontrado

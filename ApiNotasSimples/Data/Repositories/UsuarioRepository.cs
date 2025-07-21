@@ -18,24 +18,28 @@ namespace ApiCadastroClientes.Data.Repositories
         }
 
         //adicionar
-        public async Task<int> Adicionar(UsuarioModel usuario)
+        public async Task<UsuarioModel> Adicionar(UsuarioModel usuario)
         {
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
 
-            var cmd = new SqlCommand(@"INSERT INTO Usuarios (Nome, Email, Senha, Endereco, Cpf, Telefone)
-                                       VALUES (@nome, @email, @senha, @endereco, @cpf, @telefone);
-                                       SELECT SCOPE_IDENTITY();", conn);
+            var cmd = new SqlCommand(@"INSERT INTO Usuarios (Nome, Email, Senha, Endereco, Cpf, Telefone, Role)
+                                       VALUES (@nome, @email, @senha, @endereco, @cpf, @telefone, @role);", conn);
             cmd.Parameters.AddWithValue("@nome", (object)usuario.Nome ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@email", (object)usuario.Email ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@senha", (object)usuario.Senha ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@endereco", (object)usuario.Endereco ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@cpf", (object)usuario.Cpf ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@telefone", (object)usuario.Telefone ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@role", (object)usuario.Role ?? DBNull.Value);
 
-            var id = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-            _logger.LogInformation("Usuário adicionado com ID: {Id}", id);
-            return id;
+            await cmd.ExecuteNonQueryAsync();
+            var novoUsuario = await BuscarPorEmail(usuario.Email);
+            if (novoUsuario == null)
+                throw new Exception("Falha ao recuperar usuário após inserção");
+                
+            _logger.LogInformation("Usuário adicionado com ID: {Id}", novoUsuario.Id);
+            return novoUsuario;
         }
 
         //buscar por email
@@ -54,7 +58,7 @@ namespace ApiCadastroClientes.Data.Repositories
                 {
                     var usuario = new UsuarioModel
                     {
-                        Id = reader.GetInt32(0),
+                        Id = reader.GetGuid(0),
                         Nome = reader.GetString(1),
                         Email = reader.GetString(2),
                         Senha = reader.IsDBNull(3) ? null : reader.GetString(3),
@@ -74,12 +78,12 @@ namespace ApiCadastroClientes.Data.Repositories
         }
 
         //buscar por ID
-        public async Task<UsuarioModel?> BuscarPorId(int id)
+        public async Task<UsuarioModel?> BuscarPorId(Guid id)
         {
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
 
-            var cmd = new SqlCommand("SELECT Id, Nome, Email, Endereco, Cpf, Telefone FROM Usuarios WHERE Id = @Id", conn);
+            var cmd = new SqlCommand("SELECT * FROM Usuarios WHERE Id = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", id);
 
             await using var reader = await cmd.ExecuteReaderAsync();
@@ -87,12 +91,13 @@ namespace ApiCadastroClientes.Data.Repositories
             {
                 return new UsuarioModel
                 {
-                    Id = reader.GetInt32(0),
+                    Id = reader.GetGuid(0),
                     Nome = reader.GetString(1),
                     Email = reader.GetString(2),
-                    Endereco = reader.IsDBNull(3) ? null : reader.GetString(3),
-                    Cpf = reader.IsDBNull(4) ? null : reader.GetString(4),
-                    Telefone = reader.IsDBNull(5) ? null : reader.GetString(5)
+                    Telefone = reader.GetString(4),
+                    Cpf = reader.GetString(5),
+                    Endereco = reader.GetString(6),
+                    Role = reader.GetString(7)
                 };
             }
 
@@ -113,14 +118,13 @@ namespace ApiCadastroClientes.Data.Repositories
             {
                 lista.Add(new UsuarioModel
                 {
-                    Id = reader.GetInt32(0),
+                    Id = reader.GetGuid(0),
                     Nome = reader.GetString(1),
                     Email = reader.GetString(2),
-                    Endereco = reader.IsDBNull(6) ? null : reader.GetString(6),
-                    Cpf = reader.IsDBNull(5) ? null : reader.GetString(5),
                     Telefone = reader.IsDBNull(4) ? null : reader.GetString(4),
-                    Role = reader.GetString(7) 
-
+                    Cpf = reader.IsDBNull(5) ? null : reader.GetString(5),
+                    Endereco = reader.IsDBNull(6) ? null : reader.GetString(6),
+                    Role = reader.IsDBNull(7) ? null : reader.GetString(7)
                 });
             }
 
@@ -137,7 +141,7 @@ namespace ApiCadastroClientes.Data.Repositories
         }
 
         //Atualizar
-        public async Task<bool> Atualizar(int id, UsuarioModel usuario)
+        public async Task<bool> Atualizar(Guid id, UsuarioModel usuario)
         {
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
@@ -152,13 +156,14 @@ namespace ApiCadastroClientes.Data.Repositories
             cmd.Parameters.AddWithValue("@endereco", (object)usuario.Endereco ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@cpf", (object)usuario.Cpf ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@telefone", (object)usuario.Telefone ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@role", (object)usuario.Role ?? DBNull.Value);
 
             var rows = await cmd.ExecuteNonQueryAsync();
             return rows > 0;
         }
 
         //remover
-        public async Task<bool> Remover(int id)
+        public async Task<bool> Remover(Guid id)
         {
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();

@@ -1,12 +1,10 @@
 ﻿using ApiCadastroClientes.Data.Repositories;
 using ApiCadastroClientes.Services;
 using ApiNotasSimples.Data.Context;
-using ApiNotasSimples.Services;
-using Microsoft.Extensions.Logging;
+using ApiNotasSimples.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using ApiNotasSimples.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +47,7 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = false,
-            ValidateAudience = false 
+            ValidateAudience = false
         };
     });
 
