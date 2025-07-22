@@ -59,6 +59,17 @@ public class UsuarioController : ControllerBase
         return Ok(usuario);
     }
 
+    // GET: Busca usuário por nome
+    [HttpGet("nome/{nome}")]
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> BuscarNome(string nome)
+    {
+        var usuario = await _repo.BuscarNome(nome);
+        if (usuario == null)
+            return NotFound();
+        return Ok(usuario);
+    }
+
     // PUT: Atualiza usuário por ID
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]

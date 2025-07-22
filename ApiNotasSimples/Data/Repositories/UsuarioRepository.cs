@@ -87,6 +87,33 @@ namespace ApiCadastroClientes.Data.Repositories
             cmd.Parameters.AddWithValue("@Id", id);
 
             await using var reader = await cmd.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+            {
+                return new UsuarioModel
+                {
+                    Id = reader.GetGuid(0),
+                    Nome = reader.GetString(1),
+                    Email = reader.GetString(2),
+                    Telefone = reader.GetString(4),
+                    Cpf = reader.GetString(5),
+                    Endereco = reader.GetString(6),
+                    Role = reader.GetString(7)
+                };
+            }
+
+            return null;
+        }
+
+        //buscar por Nome
+        public async Task<UsuarioModel?> BuscarNome(string nome)
+        {
+            await using var conn = _context.GetConnection();
+            await conn.OpenAsync();
+
+            var cmd = new SqlCommand("SELECT * FROM Usuarios WHERE Nome = @Nome", conn);
+            cmd.Parameters.AddWithValue("@Nome", nome);
+
+            await using var reader = await cmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
                 return new UsuarioModel
