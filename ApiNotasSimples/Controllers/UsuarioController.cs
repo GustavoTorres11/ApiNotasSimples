@@ -22,7 +22,7 @@ public class UsuarioController : ControllerBase
 
     // POST: Cadastra novo usuário
     [HttpPost]
-    [Authorize(Roles = "admin")]
+
     public async Task<IActionResult> Cadastrar([FromBody] UsuarioModel usuario)
     {
         if (usuario == null || !ModelState.IsValid)
@@ -42,7 +42,7 @@ public class UsuarioController : ControllerBase
 
     // GET: Lista todos os usuários
     [HttpGet]
-    [Authorize(Roles = "admin")]
+  
     public async Task<ActionResult> ListarTodos()
     {
         return Ok(await _repo.ListarTodos());
@@ -50,7 +50,7 @@ public class UsuarioController : ControllerBase
 
     // GET: Busca usuário por ID
     [HttpGet("{id}")]
-    [Authorize(Roles = "admin")]
+
     public async Task<IActionResult> BuscarPorId(Guid id)
     {
         var usuario = await _repo.BuscarPorId(id);
@@ -60,8 +60,7 @@ public class UsuarioController : ControllerBase
     }
 
     // GET: Busca usuário por nome
-    [HttpGet("nome/{nome}")]
-    [Authorize(Roles = "admin")]
+    [HttpGet("buscar")]
     public async Task<IActionResult> BuscarNome(string nome)
     {
         var usuario = await _repo.BuscarNome(nome);
@@ -72,7 +71,6 @@ public class UsuarioController : ControllerBase
 
     // PUT: Atualiza usuário por ID
     [HttpPut("{id}")]
-    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] UsuarioModel usuario)
     {
         usuario.Senha = _cryptoService.HashPassword(usuario.Senha);
@@ -82,7 +80,6 @@ public class UsuarioController : ControllerBase
 
     // DELETE: Remove usuário por ID
     [HttpDelete("{id}")]
-    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Remover(Guid id)
     {
         var removido = await _repo.Remover(id);

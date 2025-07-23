@@ -12,11 +12,11 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp",
-        policy => policy
-            .WithOrigins("http://localhost:4200")
+    options.AddPolicy("AllowAngularApp", policy =>
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200") // URLs do Angular
+            .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowCredentials());
 });
 
 // Adiciona serviços ao container
