@@ -2,6 +2,7 @@
 using ApiCadastroClientes.Services;
 using ApiNotasSimples.Helpers;
 using ApiNotasSimples.Models;
+using ApiNotasSimples.Models.DTO;
 using ApiNotasSimples.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,14 +34,7 @@ namespace ApiCadastroClientes.Controllers
             try
             {
                 var usuario = await _authService.Cadastrar(cadastro);
-
-                return Ok(new
-                {   
-                    usuario.Id,
-                    usuario.Nome,
-                    usuario.Email,  
-                    usuario.Role
-                });
+                return Ok(new Response<UsuarioResult> (new UsuarioResult(usuario), "sucesso", true));
             }
             catch (Exception ex)
             {
