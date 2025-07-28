@@ -91,7 +91,7 @@ namespace ApiCadastroClientes.Data.Repositories
             {
                 return new UsuarioModel
                 {
-                    Id = reader.GetGuid(0),
+                    Id = reader.GetGuid(0), 
                     Nome = reader.GetString(1),
                     Email = reader.GetString(2),
                     Telefone = reader.GetString(4),
@@ -104,32 +104,59 @@ namespace ApiCadastroClientes.Data.Repositories
             return null;
         }
 
-        //buscar por Nome
-        public async Task<UsuarioModel?> BuscarNome(string nome)
+        public async Task<List<UsuarioModel>> BuscarPorTermo(string termo = "")
         {
-            await using var conn = _context.GetConnection();
-            await conn.OpenAsync();
+            var usuarios = new List<UsuarioModel>();
 
-            var cmd = new SqlCommand("SELECT * FROM Usuarios WHERE Nome = @Nome", conn);
-            cmd.Parameters.AddWithValue("@Nome", nome);
+            using var connection = _context.GetConnection();
+            await connection.OpenAsync();
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
+            string query;
+
+            if (!string.IsNullOrWhiteSpace(termo))
             {
-                return new UsuarioModel
+                query = @"
+                SELECT Id, Nome, Email, Senha, Endereco, Cpf, Telefone, Role
+                FROM Usuarios
+                WHERE
+                Nome LIKE @Termo OR
+                Email LIKE @Termo OR
+                CONVERT(VARCHAR, Telefone) LIKE @Termo OR
+                CONVERT(VARCHAR, Cpf) LIKE @Termo";
+            }
+            else
+            {
+                query = "SELECT Id, Nome, Email, Senha, Endereco, Cpf, Telefone, Role FROM Usuarios";
+            }
+
+            var command = new SqlCommand(query, connection);
+
+            if (!string.IsNullOrWhiteSpace(termo))
+            {
+                command.Parameters.AddWithValue("@Termo", $"%{termo}%");
+            }
+
+            var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                usuarios.Add(new UsuarioModel
                 {
                     Id = reader.GetGuid(0),
-                    Nome = reader.GetString(1),
-                    Email = reader.GetString(2),
-                    Telefone = reader.GetString(4),
-                    Cpf = reader.GetString(5),
-                    Endereco = reader.GetString(6),
-                    Role = reader.GetString(7)
-                };
+                    Nome = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+                    Email = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+                    Senha = reader.IsDBNull(3) ? null : reader.GetString(3),
+                    Endereco = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    Cpf = reader.IsDBNull(5) ? null : reader.GetString(5),
+                    Telefone = reader.IsDBNull(6) ? null : reader.GetString(6),
+                    Role = reader.IsDBNull(7) ? null : reader.GetString(7)
+                });
             }
 
-            return null;
+            return usuarios;
         }
+
+
 
         //listar todos
         public async Task<List<UsuarioResult>> ListarTodos()

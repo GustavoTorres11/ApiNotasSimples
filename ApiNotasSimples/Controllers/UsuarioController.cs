@@ -61,12 +61,10 @@ public class UsuarioController : ControllerBase
 
     // GET: Busca usuário por nome
     [HttpGet("buscar")]
-    public async Task<IActionResult> BuscarNome(string nome)
+    public async Task<IActionResult> BuscarPorTermo([FromQuery] string termo)
     {
-        var usuario = await _repo.BuscarNome(nome);
-        if (usuario == null)
-            return NotFound();
-        return Ok(usuario);
+        var usuarios = await _repo.BuscarPorTermo(termo);
+        return Ok(usuarios);
     }
 
     // PUT: Atualiza usuário por ID
