@@ -23,8 +23,8 @@ namespace ApiCadastroClientes.Data.Repositories
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
 
-            var cmd = new SqlCommand(@"INSERT INTO Usuarios (Nome, Email, Senha, Endereco, Cpf, Telefone, Role, Active)
-                                       VALUES (@nome, @email, @senha, @endereco, @cpf, @telefone, @role, @active);", conn);
+            var cmd = new SqlCommand(@"INSERT INTO Usuarios (Nome, Email, Senha, Endereco, Cpf, Telefone, Role, Record_status)
+                                       VALUES (@nome, @email, @senha, @endereco, @cpf, @telefone, @role, @record_status);", conn);
             cmd.Parameters.AddWithValue("@nome", (object)usuario.Nome ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@email", (object)usuario.Email ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@senha", (object)usuario.Senha ?? DBNull.Value);
@@ -32,7 +32,7 @@ namespace ApiCadastroClientes.Data.Repositories
             cmd.Parameters.AddWithValue("@cpf", (object)usuario.Cpf ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@telefone", (object)usuario.Telefone ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@role", (object)usuario.Role ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@active", (object)usuario.Active ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@active", (object)usuario.Record_status ?? DBNull.Value);
 
             await cmd.ExecuteNonQueryAsync();
             var novoUsuario = await BuscarPorEmail(usuario.Email);
@@ -51,7 +51,7 @@ namespace ApiCadastroClientes.Data.Repositories
             try
             {
                 await conn.OpenAsync();
-                var cmd = new SqlCommand("SELECT Id, Nome, Email, Senha, Role FROM Usuarios WHERE Email = @Email and Active = 1", conn);
+                var cmd = new SqlCommand("SELECT Id, Nome, Email, Senha, Role FROM Usuarios WHERE Email = @Email and Record_status = 1", conn);
                 cmd.Parameters.AddWithValue("@Email", email);
 
                 await using var reader = await cmd.ExecuteReaderAsync();
@@ -117,9 +117,9 @@ namespace ApiCadastroClientes.Data.Repositories
             if (!string.IsNullOrWhiteSpace(termo))
             {
                 query = @"
-                SELECT Id, Nome, Email, Senha, Endereco, Cpf, Telefone, Role, Active
+                SELECT Id, Nome, Email, Senha, Endereco, Cpf, Telefone, Role, Record_status
                 FROM Usuarios
-                WHERE Active = 1
+                WHERE Record_status = 1
                 AND (
                 Nome LIKE @Termo OR
                 Email LIKE @Termo OR
@@ -129,7 +129,7 @@ namespace ApiCadastroClientes.Data.Repositories
             }
             else
             {
-                query = "SELECT Id, Nome, Email, Senha, Endereco, Cpf, Telefone, Role FROM Usuarios Where Active = 1";
+                query = "SELECT Id, Nome, Email, Senha, Endereco, Cpf, Telefone, Role FROM Usuarios Where Record_status = 1";
             }
 
             var command = new SqlCommand(query, connection);
@@ -167,7 +167,7 @@ namespace ApiCadastroClientes.Data.Repositories
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
 
-            var cmd = new SqlCommand("SELECT * FROM Usuarios Where Active = 1", conn);
+            var cmd = new SqlCommand("SELECT * FROM Usuarios Where Record_status = 1", conn);
             await using var reader = await cmd.ExecuteReaderAsync();
 
             var lista = new List<UsuarioModel>();
@@ -205,7 +205,7 @@ namespace ApiCadastroClientes.Data.Repositories
 
             var cmd = new SqlCommand(@"UPDATE Usuarios 
                                        SET Nome = @nome, Email = @email, Senha = @senha, Endereco = @endereco, Cpf = @cpf, Telefone = @telefone 
-                                       WHERE Id = @id, Active = 1", conn);
+                                       WHERE Id = @id, Record_status = 1", conn);
             cmd.Parameters.AddWithValue("@id", id);
             cmd.Parameters.AddWithValue("@nome", (object)usuario.Nome ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@email", (object)usuario.Email ?? DBNull.Value);
@@ -225,7 +225,7 @@ namespace ApiCadastroClientes.Data.Repositories
             await using var conn = _context.GetConnection();
             await conn.OpenAsync();
 
-            var cmd = new SqlCommand("UPDATE Usuarios SET Active = 0 WHERE Id = @Id", conn);
+            var cmd = new SqlCommand("UPDATE Usuarios SET Record_status = 0 WHERE Id = @Id", conn);
 
             cmd.Parameters.AddWithValue("@Id", id);
 

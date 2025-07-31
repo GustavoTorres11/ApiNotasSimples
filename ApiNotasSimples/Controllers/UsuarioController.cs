@@ -25,7 +25,6 @@ public class UsuarioController : ControllerBase
 
     // POST: Cadastra novo usuário
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> Cadastrar([FromBody] UsuarioDTO usuario)
     {
         if (usuario == null || !ModelState.IsValid)
@@ -64,7 +63,6 @@ public class UsuarioController : ControllerBase
 
     // GET: Busca por usuário
     [HttpGet("buscar")]
-    [Authorize]
     public async Task<IActionResult> BuscarPorTermo([FromQuery] string termo)
     {
         var usuarios = await _repo.BuscarPorTermo(termo);
