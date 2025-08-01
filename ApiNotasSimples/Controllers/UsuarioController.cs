@@ -58,6 +58,7 @@ public class UsuarioController : ControllerBase
         var usuario = await _repo.BuscarPorId(id);
         if (usuario == null)
             return NotFound();
+        Console.Write(usuario);
         return Ok(usuario);
     }
 
@@ -98,7 +99,7 @@ public class UsuarioController : ControllerBase
         {
             var email = User.FindFirst(ClaimTypes.Name)?.Value;
             var usuario = await _repo.BuscarPorEmail(email);
-
+            Console.Write(usuario);
             return Ok(usuario);
         }
         catch

@@ -51,7 +51,7 @@ namespace ApiCadastroClientes.Data.Repositories
             try
             {
                 await conn.OpenAsync();
-                var cmd = new SqlCommand("SELECT Id, Nome, Email, Senha, Role FROM Usuarios WHERE Email = @Email and Record_status = 1", conn);
+                var cmd = new SqlCommand("SELECT Id, Nome, Email, Senha, Telefone, Cpf, Endereco, Role FROM Usuarios WHERE Email = @Email and Record_status = 1", conn);
                 cmd.Parameters.AddWithValue("@Email", email);
 
                 await using var reader = await cmd.ExecuteReaderAsync();
@@ -63,7 +63,10 @@ namespace ApiCadastroClientes.Data.Repositories
                         Nome = reader.GetString(1),
                         Email = reader.GetString(2),
                         Senha = reader.IsDBNull(3) ? null : reader.GetString(3),
-                        Role = reader.GetString(4)
+                        Telefone = reader.GetString(4),
+                        Cpf = reader.GetString(5),
+                        Endereco = reader.GetString(6),
+                        Role = reader.GetString(7)
                     };
                     _logger.LogDebug("Usuário retornado: {Email}, Senha: {Senha}", email, usuario.Senha);
                     return usuario;
